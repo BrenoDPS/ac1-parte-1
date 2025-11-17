@@ -5,6 +5,8 @@ import jakarta.persistence.*;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.Size;
 import lombok.*;
+import java.util.ArrayList;
+import java.util.List;
 
 import java.time.LocalDateTime;
 
@@ -20,7 +22,7 @@ import java.time.LocalDateTime;
 @AllArgsConstructor
 @Builder // Facilita criação: Usuario.builder().nome("João").build()
 @EqualsAndHashCode(onlyExplicitlyIncluded = true) // Comparar apenas por ID
-@ToString(exclude = "senha") // Não exibir senha em logs
+@ToString(exclude = {"senha", "conteudos", "engajamentos", "rankings"}) // Não exibir senha em logs
 public class Usuario {
     
     @Id
@@ -45,6 +47,18 @@ public class Usuario {
     
     @Column(name = "ativo")
     private Boolean ativo = true;
+
+    @OneToMany(mappedBy = "autor", cascade = CascadeType.ALL)
+    @Builder.Default
+    private List<Conteudo> conteudos = new ArrayList<>();
+
+    @OneToMany(mappedBy = "usuario", cascade = CascadeType.ALL)
+    @Builder.Default
+    private List<Engajamento> engajamentos = new ArrayList<>();
+
+    @OneToMany(mappedBy = "usuario", cascade = CascadeType.ALL)
+    @Builder.Default
+    private List<Ranking> rankings = new ArrayList<>();
     
     /**
      * Callback JPA executado antes de persistir pela primeira vez
